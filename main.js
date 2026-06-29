@@ -9,10 +9,10 @@ const buttons = document.querySelectorAll("button");
 buttons.forEach((button) => {
   button.addEventListener("click", (e) => {
     if (button.parentElement.className === "digits") {
-      // to hold only digit, using varDigit which becomes
-      // varFirst or varSecond
+      // to hold only digit, use varDigit which becomes
+      // varFirst or varSecond depending on varFirst is empty or not.
       // inputDisplay shows all the input including operators
-      //   inputDisplay.value += button.textContent;
+      // inputDisplay.value += button.textContent; //old content
       varDigit += button.textContent;
       inputDisplay.value += button.textContent;
 
@@ -30,8 +30,22 @@ buttons.forEach((button) => {
       console.log("operator", operator);
     } else if (button.parentElement.className === "operators" && varFirst) {
       varSecond = varDigit;
+      console.log("varSecond", varSecond);
+      const a = Number(varFirst);
+      const b = Number(varSecond);
+      varFirst = operate(operator, a, b);
+
+      varFirst = String(varFirst);
+      varSecond = "";
+      varDigit = "";
+
+      inputDisplay.value = varFirst;
+
+      console.log(a, b);
+
       operator = button.textContent;
       inputDisplay.value += button.textContent;
+      console.log("varFirst", varFirst);
       console.log("varSecond", varSecond);
       console.log("operator", operator);
     }
