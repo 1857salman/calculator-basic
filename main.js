@@ -4,7 +4,8 @@ let varSecond = "";
 let varDigit = "";
 const inputDisplay = document.querySelector("input");
 
-const buttons = document.querySelectorAll("button");
+const buttons = document.querySelectorAll("div button");
+// get only children of one class digits
 
 buttons.forEach((button) => {
   button.addEventListener("click", (e) => {
@@ -22,13 +23,14 @@ buttons.forEach((button) => {
     } else if (button.parentElement.className === "operators" && !varFirst) {
       varFirst = varDigit;
       operator = button.textContent;
+
       varDigit = "";
 
       // do not display "=" sign
-      inputDisplay.value +=
-        button.textContent === "=" ? "" : button.textContent;
+      // inputDisplay.value +=
+      //   button.textContent === "=" ? "" : button.textContent;
 
-      // inputDisplay.value += button.textContent;
+      inputDisplay.value += button.textContent;
 
       console.log("varFirst", varFirst);
       console.log("operator", operator);
@@ -50,10 +52,11 @@ buttons.forEach((button) => {
       console.log(a, b);
 
       operator = button.textContent;
-      // inputDisplay.value += button.textContent;
 
-      inputDisplay.value +=
-        button.textContent === "=" ? "" : button.textContent;
+      inputDisplay.value += button.textContent;
+
+      // inputDisplay.value +=
+      //   button.textContent === "=" ? "" : button.textContent;
 
       console.log("varFirst", varFirst);
       console.log("varSecond", varSecond);
@@ -65,8 +68,33 @@ buttons.forEach((button) => {
 const equalBtn = document.querySelector("#equal");
 const clearBtn = document.querySelector("#clear");
 
+//Separate treatment for "=" operator
 equalBtn.addEventListener("click", (e) => {
-  inputDisplay.value = varFirst;
+  if (varFirst) {
+    varSecond = varDigit;
+    console.log("varSecond", varSecond);
+
+    //Now call the operate function assigning it to varFirst
+    const a = Number(varFirst);
+    const b = Number(varSecond);
+    varFirst = operate(operator, a, b);
+
+    //   stage for the next binary operations with new operator
+    varFirst = String(varFirst);
+    varSecond = "";
+    varDigit = varFirst;
+    varFirst = "";
+    inputDisplay.value = varFirst;
+    console.log("varFirst", varFirst);
+    console.log("varSecond", varSecond);
+    console.log("operator", operator);
+  }
+
+  inputDisplay.value = varFirst ? varFirst : varDigit;
+  // varFirst = "";
+  varSecond = "";
+  varDigit = inputDisplay.value;
+  operator = "";
 });
 
 // Works fine
@@ -75,6 +103,7 @@ clearBtn.addEventListener("click", (e) => {
   varDigit = "";
   varFirst = "";
   varSecond = "";
+  operator = "";
 });
 // This piece of code works fine! tested and adpated above
 // ---------------------------------------------------------
