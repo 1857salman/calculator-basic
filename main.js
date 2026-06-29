@@ -31,20 +31,23 @@ buttons.forEach((button) => {
     } else if (button.parentElement.className === "operators" && varFirst) {
       varSecond = varDigit;
       console.log("varSecond", varSecond);
+
+      //Now call the operate function assigning it to varFirst
       const a = Number(varFirst);
       const b = Number(varSecond);
       varFirst = operate(operator, a, b);
 
+      //   stage for the next binary operations with new operator
       varFirst = String(varFirst);
       varSecond = "";
       varDigit = "";
-
       inputDisplay.value = varFirst;
 
       console.log(a, b);
 
       operator = button.textContent;
       inputDisplay.value += button.textContent;
+
       console.log("varFirst", varFirst);
       console.log("varSecond", varSecond);
       console.log("operator", operator);
@@ -79,15 +82,15 @@ function operate(operation, a, b) {
 }
 
 function add(a, b) {
-  return a + b;
+  return (a + b).toFixed(2);
 }
 
 function subtract(a, b) {
-  return a - b;
+  return (a - b).toFixed(2);
 }
 
 function multiply(a, b) {
-  return a * b;
+  return (a * b).toFixed(4);
 }
 
 function divide(a, b) {
