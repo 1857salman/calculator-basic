@@ -1,7 +1,7 @@
 let varFirst = "";
 let operator = "";
 let varSecond = "";
-
+let varDigit = "";
 const inputDisplay = document.querySelector("input");
 
 const buttons = document.querySelectorAll("button");
@@ -9,17 +9,31 @@ const buttons = document.querySelectorAll("button");
 buttons.forEach((button) => {
   button.addEventListener("click", (e) => {
     if (button.parentElement.className === "digits") {
+      // to hold only digit, using varDigit which becomes
+      // varFirst or varSecond
+      // inputDisplay shows all the input including operators
+      //   inputDisplay.value += button.textContent;
+      varDigit += button.textContent;
       inputDisplay.value += button.textContent;
+
       console.log(button.textContent);
       console.log(button.parentElement.className);
-    } else if (button.parentElement.className === "operators") {
-      varFirst = inputDisplay.value;
+      console.log("varDigit", varDigit);
+    } else if (button.parentElement.className === "operators" && !varFirst) {
+      varFirst = varDigit;
       operator = button.textContent;
+      varDigit = "";
+
+      inputDisplay.value += button.textContent;
 
       console.log("varFirst", varFirst);
       console.log("operator", operator);
-
+    } else if (button.parentElement.className === "operators" && varFirst) {
+      varSecond = varDigit;
+      operator = button.textContent;
       inputDisplay.value += button.textContent;
+      console.log("varSecond", varSecond);
+      console.log("operator", operator);
     }
   });
 });
