@@ -24,7 +24,11 @@ buttons.forEach((button) => {
       operator = button.textContent;
       varDigit = "";
 
-      inputDisplay.value += button.textContent;
+      // do not display "=" sign
+      inputDisplay.value +=
+        button.textContent === "=" ? "" : button.textContent;
+
+      // inputDisplay.value += button.textContent;
 
       console.log("varFirst", varFirst);
       console.log("operator", operator);
@@ -46,7 +50,10 @@ buttons.forEach((button) => {
       console.log(a, b);
 
       operator = button.textContent;
-      inputDisplay.value += button.textContent;
+      // inputDisplay.value += button.textContent;
+
+      inputDisplay.value +=
+        button.textContent === "=" ? "" : button.textContent;
 
       console.log("varFirst", varFirst);
       console.log("varSecond", varSecond);
@@ -55,6 +62,20 @@ buttons.forEach((button) => {
   });
 });
 
+const equalBtn = document.querySelector("#equal");
+const clearBtn = document.querySelector("#clear");
+
+equalBtn.addEventListener("click", (e) => {
+  inputDisplay.value = varFirst;
+});
+
+// Works fine
+clearBtn.addEventListener("click", (e) => {
+  inputDisplay.value = "";
+  varDigit = "";
+  varFirst = "";
+  varSecond = "";
+});
 // This piece of code works fine! tested and adpated above
 // ---------------------------------------------------------
 // const opButton = document.querySelector(".operators button");
