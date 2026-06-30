@@ -1,15 +1,21 @@
+//Adress the following:
+// "=" operator edge cases
+//  cosecutive operator case e.g. ++ or +/
+//  adress first operator case: +2 , *7 etc
+
+// use varDigit which becomes
+// varFirst or varSecond depending on varFirst is empty or not.
+// varEq is variable to deal with "=" operator cases.
+// operator is math operation excludes "=" and "clear".
+// inputDisplay shows all the input including operators
+
 let varFirst = "";
 let operator = "";
 let varSecond = "";
 let varDigit = "";
+let varEq = ""; //to check its role in "=" operator
 
 const decimal = document.querySelector("#decimal");
-// function checkDecimal() {
-//   const decimal = document.querySelector("#decimal");
-//   decimal.disabled = decimal.disabled ? false : true;
-//   console.log(decimal.disabled);
-// }
-
 const inputDisplay = document.querySelector("input");
 
 //select buttons excluding "=" and clear buttons.
@@ -18,34 +24,28 @@ const buttons = document.querySelectorAll("div button");
 buttons.forEach((button) => {
   button.addEventListener("click", (e) => {
     if (button.parentElement.className === "digits") {
-      // to hold only digit, use varDigit which becomes
-      // varFirst or varSecond depending on varFirst is empty or not.
-      // inputDisplay shows all the input including operators
+      //To avoid appending digits to result of "=": to check casses
+      if (varEq) clear();
 
-      // varDigit += button.textContent; //old working code
-      // inputDisplay.value += button.textContent;//old working code
+      varDigit += button.textContent; //old working code
+      inputDisplay.value += button.textContent; //old working code
 
-      //this part works as expected
-      varDigit += button.disabled ? "" : button.textContent;
-      inputDisplay.value += button.disabled ? "" : button.textContent;
+      //decimal is disabled
+      if (varDigit.split(".").length === 2 && e.target.id === "decimal")
+        e.target.disabled = true;
 
       console.log(button.textContent);
       console.log(button.parentElement.className);
       console.log("varDigit", varDigit);
-      if (varDigit.split(".").length === 2 && e.target.id === "decimal")
-        e.target.disabled = true; //decimal is disabled
     } else if (button.parentElement.className === "operators" && !varFirst) {
       varFirst = varDigit;
       operator = button.textContent;
-
       varDigit = "";
       decimal.disabled = false;
 
-      // do not display "=" sign
-      // inputDisplay.value +=
-      //   button.textContent === "=" ? "" : button.textContent;
-
       inputDisplay.value += button.textContent;
+      //new : important to add operator to result from =
+      varEq = "";
 
       console.log("varFirst", varFirst);
       console.log("operator", operator);
@@ -58,7 +58,7 @@ buttons.forEach((button) => {
       const b = Number(varSecond);
       varFirst = operate(operator, a, b);
 
-      //   stage for the next binary operations with new operator
+      // Set stage for the next binary operations with new operator
       varFirst = String(varFirst);
       varSecond = "";
       varDigit = "";
@@ -94,19 +94,19 @@ equalBtn.addEventListener("click", (e) => {
 
     //   stage for the next binary operations with new operator
     varFirst = String(varFirst);
-    varSecond = "";
 
-    //important: This will make number enter "!vaFirst condition" part in forEach
+    //important: This will make number enter "!varFirst condition" part in forEach
     varDigit = varFirst; //extremely important step
-    varFirst = "";
-    inputDisplay.value = varFirst;
+    varFirst = ""; // important dont miss it
+    //inputDisplay.value = varFirst;
     console.log("varFirst", varFirst);
     console.log("varSecond", varSecond);
     console.log("operator", operator);
   }
 
-  inputDisplay.value = varFirst ? varFirst : varDigit;
-  varSecond = "";
+  varEq = varDigit;
+  inputDisplay.value = varEq;
+
   if (inputDisplay.value.split(".").length === 2) {
     decimal.disabled = true;
   } else {
@@ -114,19 +114,24 @@ equalBtn.addEventListener("click", (e) => {
   }
 
   // combines the cases like 3 + followed by "="
-  // and 3+2 then "=" folllowed by say "+"
+  // and 3+2 then "=" then folllowed by say "+"
   varDigit = inputDisplay.value;
+  varSecond = "";
   operator = "";
 });
 
 // Works fine
-clearBtn.addEventListener("click", (e) => {
+clearBtn.addEventListener("click", clear);
+
+function clear() {
   inputDisplay.value = "";
   varDigit = "";
   varFirst = "";
   varSecond = "";
+  varEq = "";
   operator = "";
-});
+  decimal.disabled = false;
+}
 // This piece of code works fine! tested and adpated above
 // ---------------------------------------------------------
 // const opButton = document.querySelector(".operators button");
