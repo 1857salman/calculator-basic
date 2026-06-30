@@ -1,6 +1,6 @@
 //Adress the following:
 // "=" operator edge cases
-//  cosecutive operator case e.g. ++ or +/
+//  cosecutive operator case e.g. ++ or +/: take last one
 //  adress first operator case: +2 , *7 etc
 
 // use varDigit which becomes
@@ -20,24 +20,33 @@ const inputDisplay = document.querySelector("input");
 
 //select buttons excluding "=" and clear buttons.
 const buttons = document.querySelectorAll("div button");
+const buttonsDigit = document.querySelectorAll(".digits button");
+const buttonsOperator = document.querySelectorAll(".operators button");
 
-buttons.forEach((button) => {
+// only for digits including decimal
+buttonsDigit.forEach((button) => {
   button.addEventListener("click", (e) => {
-    if (button.parentElement.className === "digits") {
-      //To avoid appending digits to result of "=": to check casses
+    if (varEq) clear();
+
+    varDigit += button.textContent;
+    inputDisplay.value += button.textContent;
+
+    //decimal is disabled
+    if (varDigit.split(".").length === 2 && e.target.id === "decimal")
+      e.target.disabled = true;
+  });
+});
+
+//only for math operation excludes "=" and "clear"
+buttonsOperator.forEach((button) => {
+  button.addEventListener("click", (e) => {
+    if (!varFirst && !varDigit) {
       if (varEq) clear();
-
-      varDigit += button.textContent; //old working code
-      inputDisplay.value += button.textContent; //old working code
-
-      //decimal is disabled
-      if (varDigit.split(".").length === 2 && e.target.id === "decimal")
-        e.target.disabled = true;
-
-      console.log(button.textContent);
-      console.log(button.parentElement.className);
-      console.log("varDigit", varDigit);
-    } else if (button.parentElement.className === "operators" && !varFirst) {
+      //code here for cases like -2 + 7
+      varDigit = button.textContent;
+      inputDisplay.value = button.textContent;
+      // zero is hidden fron display
+    } else if (!varFirst && varDigit) {
       varFirst = varDigit;
       operator = button.textContent;
       varDigit = "";
@@ -49,7 +58,12 @@ buttons.forEach((button) => {
 
       console.log("varFirst", varFirst);
       console.log("operator", operator);
-    } else if (button.parentElement.className === "operators" && varFirst) {
+    } else if (varFirst && !varDigit) {
+      inputDisplay.value += button.textContent;
+      operator = button.textContent;
+      inputDisplay.value = varFirst + operator;
+      // code here
+    } else if (varFirst && varDigit) {
       varSecond = varDigit;
       console.log("varSecond", varSecond);
 
@@ -57,6 +71,7 @@ buttons.forEach((button) => {
       const a = Number(varFirst);
       const b = Number(varSecond);
       varFirst = operate(operator, a, b);
+      //console.log(a, b);
 
       // Set stage for the next binary operations with new operator
       varFirst = String(varFirst);
@@ -65,15 +80,9 @@ buttons.forEach((button) => {
       decimal.disabled = false;
       inputDisplay.value = varFirst;
 
-      console.log(a, b);
-
       operator = button.textContent;
 
       inputDisplay.value += button.textContent;
-
-      console.log("varFirst", varFirst);
-      console.log("varSecond", varSecond);
-      console.log("operator", operator);
     }
   });
 });
@@ -83,7 +92,10 @@ const clearBtn = document.querySelector("#clear");
 
 //Separate treatment for "=" operator: works fine
 equalBtn.addEventListener("click", (e) => {
-  if (varFirst) {
+  if (varEq) inputDisplay.value = varEq;
+
+  if (varFirst && varDigit) {
+    //varDigit emty evaluates to zero
     varSecond = varDigit;
     console.log("varSecond", varSecond);
 
@@ -93,19 +105,23 @@ equalBtn.addEventListener("click", (e) => {
     varFirst = operate(operator, a, b);
 
     //   stage for the next binary operations with new operator
-    varFirst = String(varFirst);
+    varFirst = varFirst.toString();
+    varEq = varFirst;
+    inputDisplay.value = varEq;
 
     //important: This will make number enter "!varFirst condition" part in forEach
     varDigit = varFirst; //extremely important step
     varFirst = ""; // important dont miss it
-    //inputDisplay.value = varFirst;
-    console.log("varFirst", varFirst);
-    console.log("varSecond", varSecond);
-    console.log("operator", operator);
+  } else if (varFirst && !varDigit) {
+    //3/= gives error
+    inputDisplay.value = "Error";
+    varEq = "Error";
+    varFirst = "";
+  } else {
+    varEq = varDigit ? Number(varDigit).toString() : "";
+    inputDisplay.value = varEq;
+    varDigit = inputDisplay.value;
   }
-
-  varEq = varDigit;
-  inputDisplay.value = varEq;
 
   if (inputDisplay.value.split(".").length === 2) {
     decimal.disabled = true;
@@ -115,9 +131,14 @@ equalBtn.addEventListener("click", (e) => {
 
   // combines the cases like 3 + followed by "="
   // and 3+2 then "=" then folllowed by say "+"
-  varDigit = inputDisplay.value;
+  //varDigit = inputDisplay.value;
+
+  // varDigit = "";
   varSecond = "";
   operator = "";
+  console.log("varFirst", varFirst);
+  console.log("varSecond", varSecond);
+  console.log("varEq", varEq);
 });
 
 // Works fine
@@ -132,18 +153,14 @@ function clear() {
   operator = "";
   decimal.disabled = false;
 }
-// This piece of code works fine! tested and adpated above
-// ---------------------------------------------------------
-// const opButton = document.querySelector(".operators button");
-// opButton.addEventListener("click", () => {
-//   inputDisplay.value = opButton.textContent;
-// });
-// console.log(opButton.parentElement);
-// let operator = opButton.textContent;
-// let a = 4.0,
-//   b = 2.0;
-// console.log(operate(operator, a, b));
-// --------------------------------------------------------
+
+function reset() {
+  varFirst = "";
+  varSecond = "";
+  varEq = "";
+  operator = "";
+  decimal.disabled = false;
+}
 
 function operate(operation, a, b) {
   switch (operation) {
@@ -173,3 +190,7 @@ function multiply(a, b) {
 function divide(a, b) {
   return (a / b).toFixed(4);
 }
+
+// console.log("varFirst", varFirst);
+// console.log("varSecond", varSecond);
+// console.log("operator", operator);
