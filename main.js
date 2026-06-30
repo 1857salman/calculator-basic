@@ -13,7 +13,7 @@ let varFirst = "";
 let operator = "";
 let varSecond = "";
 let varDigit = "";
-let varEq = ""; //to check its role in "=" operator
+let varEq = ""; //to deal with "=" operator result/display
 
 const decimal = document.querySelector("#decimal");
 const inputDisplay = document.querySelector("input");
@@ -54,6 +54,7 @@ buttonsOperator.forEach((button) => {
 
       inputDisplay.value += button.textContent;
       //new : important to add operator to result from =
+      //no longer functional
       varEq = "";
 
       console.log("varFirst", varFirst);
@@ -74,7 +75,7 @@ buttonsOperator.forEach((button) => {
       //console.log(a, b);
 
       // Set stage for the next binary operations with new operator
-      varFirst = String(varFirst);
+      varFirst = Number(varFirst).toString();
       varSecond = "";
       varDigit = "";
       decimal.disabled = false;
@@ -104,12 +105,14 @@ equalBtn.addEventListener("click", (e) => {
     const b = Number(varSecond);
     varFirst = operate(operator, a, b);
 
-    //   stage for the next binary operations with new operator
-    varFirst = varFirst.toString();
+    //Nice trick to get trucated decimal values
+    varFirst = Number(varFirst).toString();
     varEq = varFirst;
     inputDisplay.value = varEq;
 
+    //   stage for the next binary operations with new operator
     //important: This will make number enter "!varFirst condition" part in forEach
+    //No longer in use
     varDigit = varFirst; //extremely important step
     varFirst = ""; // important dont miss it
   } else if (varFirst && !varDigit) {
@@ -141,20 +144,12 @@ equalBtn.addEventListener("click", (e) => {
   console.log("varEq", varEq);
 });
 
-// Works fine
+// clear button: Works fine
 clearBtn.addEventListener("click", clear);
 
 function clear() {
   inputDisplay.value = "";
   varDigit = "";
-  varFirst = "";
-  varSecond = "";
-  varEq = "";
-  operator = "";
-  decimal.disabled = false;
-}
-
-function reset() {
   varFirst = "";
   varSecond = "";
   varEq = "";
